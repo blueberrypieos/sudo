@@ -1,0 +1,13 @@
+Description: Guard Endpoint Security headers with the audit feature macro
+Author: The Blueberry Pie OS Authors
+Forwarded: not-needed
+Last-Update: 2026-11-10
+
+--- a/sudo/plugins/sudoers/audit.c
++++ b/sudo/plugins/sudoers/audit.c
+@@ -47 +47 @@
+-#ifdef __APPLE__
++#ifdef __APPLE_AUDIT__
+@@ -50 +50 @@
+-#endif /*__APPLE__ */
++#endif

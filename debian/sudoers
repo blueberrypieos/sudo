@@ -1,0 +1,9 @@
+# SPDX-License-Identifier: BSD-2-Clause
+# Copyright (c) 2026 The Blueberry Pie OS Authors
+Defaults env_reset
+Defaults use_pty
+Defaults authenticate
+Defaults !rootpw, !targetpw, !runaspw
+Defaults secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+root ALL=(ALL) ALL
+%admin ALL=(ALL) ALL

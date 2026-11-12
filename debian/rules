@@ -1,0 +1,48 @@
+#!/usr/bin/make -f
+# SPDX-License-Identifier: BSD-2-Clause
+# Copyright (c) 2026 The Blueberry Pie OS Authors
+
+include /usr/share/pietoolchain/rules.mk
+
+SRC := $(W)/src
+export PIE_REPRO_SOURCE := $(SRC)
+BINUTILS := $(TOOLCHAIN)/prefix/bin/aarch64-apple-darwin
+CONFIGURE_OPTIONS := --enable-static-sudoers --disable-shared-libutil --disable-log-server \
+	--disable-log-client --disable-intercept --disable-tmpfiles.d --with-rundir=/var/run/sudo \
+	--with-vardir=/var/db/sudo --with-editor=/usr/bin/vi \
+	--with-secure-path=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
+	--with-man ac_cv_header_libutil_h=no
+
+all: $(OBJ)/.built
+
+$(OBJ)/.configured: $(SRCROOT)/debian/rules
+	rm -rf $(SRC)
+	mkdir -p $(SRC) $(OBJ)
+	cp -a $(SRCROOT)/sudo/. $(SRC)/
+	cd $(OBJ) && CC="$(CC)" CFLAGS="$(BASE_CFLAGS)" LDFLAGS="$(BASE_LDFLAGS)" \
+		AR=$(BINUTILS)-ar RANLIB=$(BINUTILS)-ranlib STRIP=$(STRIP) LD=$(BINUTILS)-ld \
+		$(SRC)/configure --host=aarch64-apple-darwin25 \
+		--build=$$(uname -m)-linux-gnu --prefix=/usr --localstatedir=/var \
+		$(CONFIGURE_OPTIONS) > configure.log
+	sed -i -e '/^PROGS =/s/ sudoreplay//' -e '/^install-binaries:/s/ sudoreplay//' \
+		-e '/ -m 0755 sudoreplay /d' $(OBJ)/plugins/sudoers/Makefile
+	touch $@
+
+$(OBJ)/.built: $(OBJ)/.configured
+	$(MAKE) -C $(OBJ) --eval 'iolog_openat.lo: CPPFLAGS += -I$(SRC)/plugins/sudoers'
+	touch $@
+
+install: all
+	$(MAKE) -C $(OBJ) install DESTDIR=$(ROOT) INSTALL_OWNER=
+	rm -rf $(ROOT)/usr/share/doc $(ROOT)/usr/include $(ROOT)/usr/share/examples \
+		$(ROOT)/usr/lib/tmpfiles.d $(ROOT)/etc/sudo_logsrvd.conf $(ROOT)/etc/sudoers.dist \
+		$(ROOT)/usr/share/man/man8/sudo_sendlog.8 $(ROOT)/usr/share/man/man8/sudoreplay.8
+	find $(ROOT) -name '*.la' -delete
+	install -m 440 $(SRCROOT)/debian/sudoers $(ROOT)/etc/sudoers
+	install -D -m 644 $(SRCROOT)/debian/pam.d/sudo $(ROOT)/etc/pam.d/sudo
+	chmod 755 $(ROOT)/usr/libexec/sudo
+	test "$$(stat -c %a $(ROOT)/usr/bin/sudo)" = 4755
+	test "$$(stat -c %a $(ROOT)/etc/sudoers)" = 440
+	test "$$(stat -c %a $(ROOT)/usr/libexec/sudo)" = 755
+
+.PHONY: all install

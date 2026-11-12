@@ -1,0 +1,6 @@
+# SPDX-License-Identifier: BSD-2-Clause
+# Copyright (c) 2026 The Blueberry Pie OS Authors
+auth       required       pam_opendirectory.so
+account    required       pam_opendirectory.so non_password_auth
+password   required       pam_deny.so
+session    required       pam_permit.so
