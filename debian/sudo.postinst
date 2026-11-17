@@ -1,0 +1,14 @@
+#!/bin/sh
+# SPDX-License-Identifier: BSD-2-Clause
+# Copyright (c) 2026 The Blueberry Pie OS Authors
+set -e
+if [ "$1" = configure ]; then
+	while read -r mode d; do
+		dpkg-statoverride --list "$d" > /dev/null ||
+			dpkg-statoverride --quiet --update --add '#0' '#0' "$mode" "$d"
+	done <<EOF
+0711 /private/var/db/sudo
+0700 /private/var/db/sudo/lectured
+0711 /private/var/run/sudo
+EOF
+fi

@@ -1,0 +1,11 @@
+#!/bin/sh
+# SPDX-License-Identifier: BSD-2-Clause
+# Copyright (c) 2026 The Blueberry Pie OS Authors
+set -e
+if [ "$1" = purge ]; then
+	for d in /private/var/db/sudo/lectured /private/var/db/sudo /private/var/run/sudo; do
+		if dpkg-statoverride --list "$d" > /dev/null; then
+			dpkg-statoverride --quiet --remove "$d"
+		fi
+	done
+fi

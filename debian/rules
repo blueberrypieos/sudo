@@ -44,5 +44,7 @@ install: all
 	test "$$(stat -c %a $(ROOT)/usr/bin/sudo)" = 4755
 	test "$$(stat -c %a $(ROOT)/etc/sudoers)" = 440
 	test "$$(stat -c %a $(ROOT)/usr/libexec/sudo)" = 755
+	install -D -m 755 $(SRCROOT)/debian/sudo.postinst $(ROOT)/DEBIAN/postinst
+	install -D -m 755 $(SRCROOT)/debian/sudo.postrm $(ROOT)/DEBIAN/postrm
 
 .PHONY: all install

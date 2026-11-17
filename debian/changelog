@@ -1,3 +1,14 @@
+sudo (114.100.11+ds1-2) blueberry-pie-os; urgency=medium
+
+  * Build-Depend on pietoolchain-host and pietoolchain-sdk.
+  * The postinst records the modes of /var/db/sudo, its lectured directory
+    and /var/run/sudo as dpkg statoverrides, so they can be made again where
+    the package does not create them. A purge removes the records. sudo
+    depends on base-files, whose /etc/group gives the records their group
+    name when the postinst runs in an image build.
+
+ -- Maxwell <maxwell@blueberrypieos.com>  Mon, 16 Nov 2026 18:43:09 +0000
+
 sudo (114.100.11+ds1-1) blueberry-pie-os; urgency=medium
 
   * sudo 114.100.11.

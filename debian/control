@@ -2,7 +2,7 @@ Source: sudo
 Section: admin
 Priority: optional
 Maintainer: Maxwell <maxwell@blueberrypieos.com>
-Build-Depends: pietoolchain (>= 0.2.0), pietoolchain-sdk (>= 0.2.0)
+Build-Depends: pietoolchain-host (>= 0.3.0), pietoolchain-sdk (>= 0.2.0)
 Standards-Version: 4.7.3
 Homepage: https://github.com/apple-oss-distributions/sudo
 Vcs-Git: https://github.com/blueberrypieos/sudo.git -b blueberry-pie-os/latest
@@ -11,7 +11,8 @@ Rules-Requires-Root: no
 
 Package: sudo
 Architecture: darwin-arm64
-Depends: libsystem, libsystem-sandbox (>= 0-2), libutil, openpam, pam-modules (>= 217.100.6+ds2-1), zlib
+Depends: base-files (>= 2), libsystem, libsystem-sandbox (>= 0-2), libutil, openpam,
+ pam-modules (>= 217.100.6+ds2-1), zlib
 Description: run commands as another user
  Run commands as another user using the sudoers policy and PAM.
  Includes visudo, cvtsudoers and sudo plugins.
